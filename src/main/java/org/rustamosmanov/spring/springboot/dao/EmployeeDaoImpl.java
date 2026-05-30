@@ -1,7 +1,7 @@
 package org.rustamosmanov.spring.springboot.dao;
 
 import jakarta.persistence.EntityManager;
-import org.hibernate.Session;
+import jakarta.persistence.Query;
 import org.rustamosmanov.spring.springboot.entity.EmployeeBD;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -15,32 +15,33 @@ public class EmployeeDaoImpl implements EmployeeDAO {
 
     @Override
     public List<EmployeeBD> getAllEmployees() {
+        /*
         Session session = entityManager.unwrap(Session.class);
         List<EmployeeBD> allEmployees = session.createQuery("from EmployeeBD", EmployeeBD.class)
                 .getResultList();
+        */
+        Query query = entityManager.createQuery("from EmployeeBD");
+        List<EmployeeBD> allEmployees = query.getResultList();
         return allEmployees;
     }
 
     @Override
     public void saveEmployee(EmployeeBD employee) {
-        Session session = entityManager.unwrap(Session.class);
         if (employee.getId() == null || employee.getId() == 0) {
-            session.persist(employee);
+            entityManager.persist(employee);
         } else {
-            session.merge(employee);
+            entityManager.merge(employee);
         }
     }
 
     @Override
     public void deleteEmployee(EmployeeBD employee) {
-        Session session = entityManager.unwrap(Session.class);
-        session.remove(employee);
+        entityManager.remove(employee);
     }
 
     @Override
     public EmployeeBD getEmployee(int id) {
-        Session session = entityManager.unwrap(Session.class);
-        EmployeeBD employee = session.get(EmployeeBD.class, id);
+        EmployeeBD employee = entityManager.find(EmployeeBD.class, id);
         return employee;
     }
 
